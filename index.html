@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +29,6 @@
             font-family: 'Share Tech Mono', monospace;
         }
 
-        /* BO2 Jiggy Menu Style */
         @keyframes jiggyBounce {
             0% {
                 transform: scale(1) rotate(0deg);
@@ -98,7 +98,6 @@
 
         .jiggy-btn:hover {
             animation-play-state: paused;
-
             transform: scale(1.12) !important;
 
             box-shadow:
@@ -141,13 +140,10 @@
 
         .glass-panel {
             background: rgba(13, 17, 23, 0.85);
-
             backdrop-filter: blur(12px);
-
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Countdown styling */
         .countdown {
             min-width: 45px;
             display: inline-flex;
@@ -172,7 +168,6 @@
             line-height: 1;
         }
 
-        /* Launching state */
         .launching {
             animation-play-state: paused !important;
 
@@ -230,7 +225,6 @@
 
     </header>
 
-
     <!-- MAIN MENU -->
     <main
         id="menu"
@@ -251,7 +245,6 @@
 
         </div>
 
-
         <!-- JAILBREAK BUTTON -->
         <button
             id="jailbreakButton"
@@ -269,18 +262,15 @@
                 class="fa-solid fa-bolt text-yellow-300 text-2xl group-hover:animate-bounce"
             ></i>
 
-
             <span class="orbitron">
                 Click here to Jailbreak!
             </span>
-
 
             <span
                 class="fw-font text-yellow-200 text-lg sm:text-2xl bg-black/40 px-3 py-1 rounded-lg border border-yellow-400/40 tracking-widest shadow-inner"
             >
                 7.00 - 13.52
             </span>
-
 
             <!-- COUNTDOWN -->
             <span class="countdown">
@@ -294,7 +284,6 @@
 
             </span>
 
-
             <i
                 class="fa-solid fa-bolt text-yellow-300 text-2xl group-hover:animate-bounce"
             ></i>
@@ -302,7 +291,6 @@
         </button>
 
     </main>
-
 
     <!-- FOOTER -->
     <footer class="w-full max-w-4xl z-20 text-center mt-6">
@@ -328,6 +316,91 @@
     </footer>
 
 
+    <!-- =========================
+         VISITOR TRACKING
+    ========================== -->
+
+    <script>
+
+        const SUPABASE_URL =
+            "https://xgzfmoqxbzbxxwhnpbuv.supabase.co";
+
+        const SUPABASE_ANON_KEY =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhnemZtb3F4YnpieHh3aG5wYnV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxODg3MjQsImV4cCI6MjEwNTc2NDcyNH0.Fi8WYHlvM-b0WdfglWyFZeyJ9UKXu1QfUJCaWJRKZDA";
+
+
+        async function trackVisit() {
+
+            try {
+
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/visits`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "apikey": SUPABASE_ANON_KEY,
+
+                            "Authorization":
+                                `Bearer ${SUPABASE_ANON_KEY}`,
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Prefer":
+                                "return=minimal"
+                        },
+
+                        body: JSON.stringify({
+
+                            page:
+                                window.location.pathname,
+
+                            referrer:
+                                document.referrer || null,
+
+                            user_agent:
+                                navigator.userAgent
+
+                        })
+                    }
+                );
+
+
+                if (!response.ok) {
+
+                    console.error(
+                        "Visitor tracking failed:",
+                        await response.text()
+                    );
+
+                } else {
+
+                    console.log(
+                        "Visitor tracked successfully."
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Visitor tracking error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* Record this visit */
+
+        trackVisit();
+
+    </script>
+
+
     <!-- JAVASCRIPT -->
     <script>
 
@@ -347,7 +420,9 @@
 
         } catch (e) {
 
-            console.log("History state handled");
+            console.log(
+                "History state handled"
+            );
 
         }
 
@@ -360,10 +435,14 @@
             document.getElementById("msgs");
 
         const countdownElem =
-            document.getElementById("countdownNumber");
+            document.getElementById(
+                "countdownNumber"
+            );
 
         const jailbreakButton =
-            document.getElementById("jailbreakButton");
+            document.getElementById(
+                "jailbreakButton"
+            );
 
         const defaultMsg =
             "PS4 Exploit Host by 4PS4.PRO";
@@ -421,7 +500,9 @@
 
             /* Stop countdown */
 
-            clearInterval(countdownTimer);
+            clearInterval(
+                countdownTimer
+            );
 
 
             /* Change button */
@@ -465,46 +546,51 @@
            COUNTDOWN
         ========================= */
 
-        countdownTimer = setInterval(function() {
+        countdownTimer =
+            setInterval(function() {
 
-            if (exploitTriggered) {
+                if (exploitTriggered) {
 
-                clearInterval(countdownTimer);
+                    clearInterval(
+                        countdownTimer
+                    );
 
-                return;
+                    return;
 
-            }
-
-
-            countdown--;
-
-            countdownElem.innerHTML =
-                countdown;
+                }
 
 
-            /* When countdown reaches zero */
-
-            if (countdown <= 0) {
-
-                clearInterval(countdownTimer);
-
+                countdown--;
 
                 countdownElem.innerHTML =
-                    "0";
+                    countdown;
 
 
-                /* Automatically launch */
+                /* When countdown reaches zero */
 
-                triggerExploit(
-                    "yasir/index.html"
-                );
+                if (countdown <= 0) {
 
-            }
+                    clearInterval(
+                        countdownTimer
+                    );
 
-        }, 1000);
 
+                    countdownElem.innerHTML =
+                        "0";
+
+
+                    /* Automatically launch */
+
+                    triggerExploit(
+                        "yasir/index.html"
+                    );
+
+                }
+
+            }, 1000);
 
     </script>
 
 </body>
 </html>
+```
