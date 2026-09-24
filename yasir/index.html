@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="ltr">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PS4 7.00 - 13.52 FW GoldHEN</title>
 
+<!-- Fonts: Orbitron, Rajdhani, Share Tech Mono, Tajawal & Cairo for Arabic -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
 <style>
 * { box-sizing: border-box; }
@@ -29,6 +34,16 @@ body {
     background-image:
         linear-gradient(to right, rgba(255,255,255,.03) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255,255,255,.03) 1px, transparent 1px);
+}
+
+/* RTL Typography Overrides */
+html[dir="rtl"] body {
+    font-family: 'Tajawal', sans-serif;
+}
+
+html[dir="rtl"] .orbitron {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
 }
 
 .orbitron { font-family: 'Orbitron', sans-serif; }
@@ -80,6 +95,31 @@ header {
     text-align: center;
 }
 
+.lang-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+
+.lang-btn {
+    background: rgba(13,17,23,.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(234,179,8,.4);
+    color: #facc15;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.lang-btn:hover {
+    background: rgba(234,179,8,.2);
+}
+
 .header-panel {
     padding: 18px 20px;
     border-radius: 18px;
@@ -88,7 +128,6 @@ header {
 
 #siteTitle {
     margin: 0;
-    font-family: 'Orbitron', sans-serif;
     font-size: clamp(18px, 3.2vw, 32px);
     font-weight: 900;
     letter-spacing: .07em;
@@ -155,7 +194,6 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Orbitron', sans-serif;
     font-size: clamp(18px, 3.3vw, 30px);
     line-height: 1.35;
     font-weight: 900;
@@ -222,7 +260,6 @@ footer {
 
 .gold {
     color: #facc15;
-    font-family: 'Orbitron', sans-serif;
     font-weight: 800;
     margin: 0 4px;
 }
@@ -233,7 +270,6 @@ footer {
     .ps4-bg i { font-size: 300px; }
 }
 </style>
-
 </head>
 
 <body>
@@ -244,20 +280,26 @@ footer {
     </div>
 
     <header>
+        <div class="lang-container">
+            <button class="lang-btn" onclick="toggleLanguage()">
+                <i class="fa-solid fa-globe"></i>
+                <span id="langBtnText">العربية</span>
+            </button>
+        </div>
         <div class="glass-panel header-panel">
-            <h1 id="siteTitle">PS4 Exploit Host by 4PS4.PRO</h1>
+            <h1 id="siteTitle" class="orbitron">PS4 Exploit Host by 4PS4.PRO</h1>
             <div class="gold-line"></div>
         </div>
     </header>
 
     <main>
         <section class="glass-panel status-panel">
-            <div class="badge">GoldHEN Auto Exploit</div>
+            <div id="badgeText" class="badge">GoldHEN Auto Exploit</div>
 
-            <h1 id="msgs">Loading GoldHEN v2.4b18.12... Please Wait</h1>
+            <h1 id="msgs" class="orbitron">Loading GoldHEN v2.4b18.12... Please Wait</h1>
 
             <div class="fw-info">
-                Detected Firmware:
+                <span id="fwLabel">Detected Firmware:</span>
                 <span id="fwDisplay" class="fw-value">Detecting...</span>
             </div>
 
@@ -267,14 +309,103 @@ footer {
 
     <footer>
         <div class="glass-panel footer-panel">
-            <span>Powered by</span>
-            <span class="gold">4PS4.PRO</span>
-            <span>| Thank Yasir Aliraqi</span>
+            <span id="footerPowered">Powered by</span>
+            <span class="gold orbitron">4PS4.PRO</span>
+            <span id="footerThanks">| Thank Yasir Aliraqi</span>
         </div>
     </footer>
 
     <script>
-        // The exploit logic below is kept from the original index.
+        const i18n = {
+            en: {
+                siteTitle: "PS4 Exploit Host by 4PS4.PRO",
+                badgeText: "GoldHEN Auto Exploit",
+                loadingMsg: "Loading GoldHEN v2.4b18.12... Please Wait",
+                notFoundMsg: "Content not Found! - Clear Browser Data and Re-Install Cache ...",
+                notPS4Msg: "Only for PS4 with Firmware 5.05 and 7.00 to 13.52",
+                unsupportedMsg: "Unsupported Firmware: ",
+                fwLabel: "Detected Firmware:",
+                footerPowered: "Powered by",
+                footerThanks: "| Thank Yasir Aliraqi",
+                langToggleBtn: "العربية"
+            },
+            ar: {
+                siteTitle: "مستضيف تهكير PS4 بواسطة 4PS4.PRO",
+                badgeText: "تفعيل GoldHEN التلقائي",
+                loadingMsg: "جاري تحميل GoldHEN v2.4b18.12... يرجى الانتظار",
+                notFoundMsg: "المحتوى غير موجود! - يرجى مسح بيانات المتصفح وإعادة تثبيت التخزين المؤقت...",
+                notPS4Msg: "مخصص فقط لجهاز PS4 بالتحديثات 5.05 ومن 7.00 إلى 13.52",
+                unsupportedMsg: "نظام غير مدعوم: ",
+                fwLabel: "النظام المكتشف:",
+                footerPowered: "بواسطة",
+                footerThanks: "| شكراً ياسر العراقي",
+                langToggleBtn: "English"
+            }
+        };
+
+        const arabicCountries = ['SA','AE','EG','IQ','KW','QA','BH','OM','JO','LB','SY','PS','YE','DZ','MA','TN','LY','SD','MR','SO','DJ','KM'];
+        let currentLang = localStorage.getItem('site_lang');
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('site_lang', lang);
+            document.documentElement.setAttribute('lang', lang);
+            document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+
+            document.getElementById('siteTitle').innerText = i18n[lang].siteTitle;
+            document.getElementById('badgeText').innerText = i18n[lang].badgeText;
+            document.getElementById('fwLabel').innerText = i18n[lang].fwLabel;
+            document.getElementById('footerPowered').innerText = i18n[lang].footerPowered;
+            document.getElementById('footerThanks').innerText = i18n[lang].footerThanks;
+            document.getElementById('langBtnText').innerText = i18n[lang].langToggleBtn;
+
+            if (msgs.dataset.state === "notPS4") {
+                msgs.innerHTML = i18n[lang].notPS4Msg;
+            } else if (msgs.dataset.state === "error") {
+                msgs.innerHTML = i18n[lang].notFoundMsg;
+            } else if (msgs.dataset.state === "unsupported") {
+                msgs.innerHTML = i18n[lang].unsupportedMsg + '<span style="color: red;">' + fwVersion + '</span>';
+            } else if (!msgs.dataset.custom) {
+                msgs.innerHTML = i18n[lang].loadingMsg;
+            }
+        }
+
+        function toggleLanguage() {
+            applyLanguage(currentLang === 'en' ? 'ar' : 'en');
+        }
+
+        async function detectLanguage() {
+            if (currentLang) {
+                applyLanguage(currentLang);
+                return;
+            }
+            const userLangs = navigator.languages || [navigator.language || navigator.userLanguage];
+            if (userLangs.some(l => l && l.toLowerCase().startsWith('ar'))) {
+                applyLanguage('ar');
+                return;
+            }
+            try {
+                const res = await fetch('https://ipapi.co/json/', { timeout: 3000 });
+                const data = await res.json();
+                if (data && arabicCountries.includes(data.country_code)) {
+                    applyLanguage('ar');
+                    return;
+                }
+            } catch (e) {}
+
+            try {
+                const res2 = await fetch('https://ipwho.is/', { timeout: 3000 });
+                const data2 = await res2.json();
+                if (data2 && data2.success && arabicCountries.includes(data2.country_code)) {
+                    applyLanguage('ar');
+                    return;
+                }
+            } catch (e) {}
+
+            applyLanguage('en');
+        }
+
+        /* Exploit Logic */
         var uaFull = navigator.userAgent;
         var match = uaFull.match(/PlayStation 4[ /]([\d.]+)/i);
         var isPS4 = match !== null;
@@ -287,86 +418,86 @@ footer {
         }
 
         function onScriptError() {
-            msgs.innerHTML = "Content not Found! - Clear Browser Data and Re-Install Cache ...";
+            msgs.dataset.state = "error";
+            msgs.innerHTML = i18n[currentLang || 'en'].notFoundMsg;
         }
 
-        if (!isPS4) {
-            document.addEventListener("DOMContentLoaded", () => {
-                msgs.innerHTML = "Only for PS4 with Firmware 5.05 and 7.00 to 13.52";
-            });
-        } else {
-            if (window.applicationCache.status == '0') {
-                if (fwNum == 5.05 || fwNum == 5.07) {
-                    window.location.replace("cache505.html");
-                } else if (fwNum >= 7.00 && fwNum <= 8.52) {
-                    window.location.replace("cache700.html");
-                } else if (fwNum >= 9.00 && fwNum <= 9.60) {
-                    window.location.replace("cache900.html");
-                } else if (fwNum >= 10.00 && fwNum <= 11.02) {
-                    window.location.replace("cachecss.html");
-                } else if (fwNum >= 11.50 && fwNum <= 13.52) {
-                    window.location.replace("cacheslopkit.html");
-                } else {
-                    document.addEventListener("DOMContentLoaded", () => {
-                        msgs.innerHTML = 'Unsupported Firmware: <span style="color: red;">' + fwVersion + '</span>';
-                    });
-                }
+        detectLanguage().then(() => {
+            if (!isPS4) {
+                msgs.dataset.state = "notPS4";
+                msgs.innerHTML = i18n[currentLang].notPS4Msg;
             } else {
-                if (fwNum == 5.05 || fwNum == 5.07) {
-                    var script = document.createElement('script');
-                    script.src = "505/exploit.js";
-                    script.onerror = onScriptError;
-                    document.head.appendChild(script);
-                }
-                else if (fwNum >= 7.00 && fwNum <= 8.52) {
-                    var script = document.createElement('script');
-                    script.type = 'module';
-                    script.src = "700/alert.js";
-                    script.onerror = onScriptError;
-                    document.head.appendChild(script);
-                }
-                else if (fwNum >= 9.00 && fwNum <= 9.60) {
-                    var script = document.createElement('script');
-                    script.type = 'module';
-                    script.src = "900/alert.js";
-                    script.onerror = onScriptError;
-                    document.head.appendChild(script);
-                }
-                else if (fwNum >= 10.00 && fwNum <= 11.02) {
-                    var script = document.createElement('script');
-                    script.src = "css/main.js";
-                    script.onerror = onScriptError;
-                    script.onload = function () {
-                        setTimeout(function () {
-                            doJb();
-                        }, 500);
-                    };
-                    document.head.appendChild(script);
-                }
-                else if (fwNum >= 11.50 && fwNum <= 12.02) {
-                    var script = document.createElement('script');
-                    script.type = 'module';
-                    script.src = "slopkit/chain_lapse.js";
-                    script.onerror = onScriptError;
-                    document.head.appendChild(script);
-                }
-                else if (fwNum >= 12.50 && fwNum <= 13.00) {
-                    var script = document.createElement('script');
-                    script.type = 'module';
-                    script.src = "slopkit/chain_poops.js";
-                    script.onerror = onScriptError;
-                    document.head.appendChild(script);
-                }
-                else if (fwNum >= 13.02 && fwNum <= 13.52) {
-                    var script = document.createElement('script');
-                    script.type = 'module';
-                    script.src = "slopkit/jb.js?v=10";
-                    script.onerror = onScriptError;
-                    document.head.appendChild(script);
+                if (window.applicationCache.status == '0') {
+                    if (fwNum == 5.05 || fwNum == 5.07) {
+                        window.location.replace("cache505.html");
+                    } else if (fwNum >= 7.00 && fwNum <= 8.52) {
+                        window.location.replace("cache700.html");
+                    } else if (fwNum >= 9.00 && fwNum <= 9.60) {
+                        window.location.replace("cache900.html");
+                    } else if (fwNum >= 10.00 && fwNum <= 11.02) {
+                        window.location.replace("cachecss.html");
+                    } else if (fwNum >= 11.50 && fwNum <= 13.52) {
+                        window.location.replace("cacheslopkit.html");
+                    } else {
+                        msgs.dataset.state = "unsupported";
+                        msgs.innerHTML = i18n[currentLang].unsupportedMsg + '<span style="color: red;">' + fwVersion + '</span>';
+                    }
+                } else {
+                    if (fwNum == 5.05 || fwNum == 5.07) {
+                        var script = document.createElement('script');
+                        script.src = "505/exploit.js";
+                        script.onerror = onScriptError;
+                        document.head.appendChild(script);
+                    }
+                    else if (fwNum >= 7.00 && fwNum <= 8.52) {
+                        var script = document.createElement('script');
+                        script.type = 'module';
+                        script.src = "700/alert.js";
+                        script.onerror = onScriptError;
+                        document.head.appendChild(script);
+                    }
+                    else if (fwNum >= 9.00 && fwNum <= 9.60) {
+                        var script = document.createElement('script');
+                        script.type = 'module';
+                        script.src = "900/alert.js";
+                        script.onerror = onScriptError;
+                        document.head.appendChild(script);
+                    }
+                    else if (fwNum >= 10.00 && fwNum <= 11.02) {
+                        var script = document.createElement('script');
+                        script.src = "css/main.js";
+                        script.onerror = onScriptError;
+                        script.onload = function () {
+                            setTimeout(function () {
+                                doJb();
+                            }, 500);
+                        };
+                        document.head.appendChild(script);
+                    }
+                    else if (fwNum >= 11.50 && fwNum <= 12.02) {
+                        var script = document.createElement('script');
+                        script.type = 'module';
+                        script.src = "slopkit/chain_lapse.js";
+                        script.onerror = onScriptError;
+                        document.head.appendChild(script);
+                    }
+                    else if (fwNum >= 12.50 && fwNum <= 13.00) {
+                        var script = document.createElement('script');
+                        script.type = 'module';
+                        script.src = "slopkit/chain_poops.js";
+                        script.onerror = onScriptError;
+                        document.head.appendChild(script);
+                    }
+                    else if (fwNum >= 13.02 && fwNum <= 13.52) {
+                        var script = document.createElement('script');
+                        script.type = 'module';
+                        script.src = "slopkit/jb.js?v=10";
+                        script.onerror = onScriptError;
+                        document.head.appendChild(script);
+                    }
                 }
             }
-        }
+        });
     </script>
 </body>
-
 </html>
