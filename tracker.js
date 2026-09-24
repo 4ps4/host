@@ -11,7 +11,7 @@
 
 
     // ==========================================
-    // GET / CREATE VISITOR ID
+    // VISITOR ID
     // ==========================================
 
     function getVisitorId() {
@@ -36,10 +36,12 @@
             return id;
 
         } catch (error) {
+
             return (
                 Date.now().toString(36) +
                 Math.random().toString(36).substring(2)
             );
+
         }
     }
 
@@ -49,7 +51,9 @@
     // ==========================================
 
     function detectDevice() {
-        const ua = navigator.userAgent.toLowerCase();
+
+        const ua =
+            navigator.userAgent.toLowerCase();
 
         if (/ipad|tablet/.test(ua)) {
             return "Tablet";
@@ -68,7 +72,9 @@
     // ==========================================
 
     function detectBrowser() {
-        const ua = navigator.userAgent;
+
+        const ua =
+            navigator.userAgent;
 
         if (/edg/i.test(ua)) {
             return "Edge";
@@ -99,7 +105,9 @@
     // ==========================================
 
     function detectOS() {
-        const ua = navigator.userAgent;
+
+        const ua =
+            navigator.userAgent;
 
         if (/Windows NT/i.test(ua)) {
             return "Windows";
@@ -126,80 +134,170 @@
 
 
     // ==========================================
-    // GET COUNTRY / CITY / REGION
+    // LOCATION SERVICE #1
+    // ipapi.co
+    // ==========================================
+
+    async function getLocationIPAPI() {
+
+        const response = await fetch(
+            "https://ipapi.co/json/",
+            {
+                method: "GET",
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "ipapi.co HTTP " +
+                response.status
+            );
+        }
+
+        const data =
+            await response.json();
+
+        if (!data.country_name) {
+            throw new Error(
+                "ipapi.co returned no country"
+            );
+        }
+
+        return {
+            country:
+                data.country_name,
+
+            city:
+                data.city || "Unknown",
+
+            region:
+                data.region || "Unknown"
+        };
+    }
+
+
+    // ==========================================
+    // LOCATION SERVICE #2
+    // ipwho.is
+    // ==========================================
+
+    async function getLocationIPWho() {
+
+        const response = await fetch(
+            "https://ipwho.is/",
+            {
+                method: "GET",
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "ipwho.is HTTP " +
+                response.status
+            );
+        }
+
+        const data =
+            await response.json();
+
+        if (!data.success || !data.country) {
+            throw new Error(
+                "ipwho.is returned no country"
+            );
+        }
+
+        return {
+            country:
+                data.country,
+
+            city:
+                data.city || "Unknown",
+
+            region:
+                data.region || "Unknown"
+        };
+    }
+
+
+    // ==========================================
+    // GET LOCATION
     // ==========================================
 
     async function getLocation() {
 
+        // Try service #1
+
         try {
 
-            const response = await fetch(
-                "https://ipapi.co/json/",
-                {
-                    method: "GET",
-                    cache: "no-store"
-                }
+            console.log(
+                "🌍 Trying ipapi.co..."
             );
 
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Location API returned HTTP " +
-                    response.status
-                );
-
-            }
-
-
-            const data = await response.json();
-
+            const location =
+                await getLocationIPAPI();
 
             console.log(
-                "🌍 Location data received:",
-                data
+                "✅ ipapi.co location:",
+                location
             );
 
-
-            return {
-
-                country:
-                    data.country_name ||
-                    data.country ||
-                    "Unknown",
-
-                city:
-                    data.city ||
-                    "Unknown",
-
-                region:
-                    data.region ||
-                    data.region_code ||
-                    "Unknown"
-
-            };
-
+            return location;
 
         } catch (error) {
 
-            console.error(
-                "🌍 Location lookup failed:",
+            console.warn(
+                "⚠️ ipapi.co failed:",
                 error
             );
 
+        }
 
-            return {
 
-                country: "Unknown",
+        // Try service #2
 
-                city: "Unknown",
+        try {
 
-                region: "Unknown"
+            console.log(
+                "🌍 Trying ipwho.is..."
+            );
 
-            };
+            const location =
+                await getLocationIPWho();
+
+            console.log(
+                "✅ ipwho.is location:",
+                location
+            );
+
+            return location;
+
+        } catch (error) {
+
+            console.warn(
+                "⚠️ ipwho.is failed:",
+                error
+            );
 
         }
 
+
+        // Both failed
+
+        console.error(
+            "❌ All location services failed."
+        );
+
+        return {
+
+            country: "Unknown",
+
+            city: "Unknown",
+
+            region: "Unknown"
+
+        };
     }
 
 
@@ -216,14 +314,13 @@
 
         try {
 
-
-            // Get visitor location
+            // Get location
 
             const location =
                 await getLocation();
 
 
-            // Create visit object
+            // Build visit
 
             const visit = {
 
@@ -262,12 +359,11 @@
 
                 visitor_id:
                     getVisitorId()
-
             };
 
 
             console.log(
-                "📊 Sending visitor data:",
+                "📊 Visitor data:",
                 visit
             );
 
@@ -305,17 +401,15 @@
                             JSON.stringify(visit)
 
                     }
-
                 );
 
 
-            // Check response
+            // Check Supabase
 
             if (!response.ok) {
 
                 const errorText =
                     await response.text();
-
 
                 console.error(
                     "================================"
@@ -340,24 +434,44 @@
                 );
 
                 return;
-
             }
 
 
             console.log(
-                "✅ 4PS4.PRO VISITOR TRACKED"
+                "================================"
             );
 
+            console.log(
+                "✅ 4PS4.PRO VISITOR TRACKED"
+            );
 
             console.log(
                 "🌍 Country:",
                 visit.country
             );
 
-
             console.log(
                 "🏙️ City:",
                 visit.city
+            );
+
+            console.log(
+                "💻 Device:",
+                visit.device
+            );
+
+            console.log(
+                "🌐 Browser:",
+                visit.browser
+            );
+
+            console.log(
+                "🖥️ OS:",
+                visit.os
+            );
+
+            console.log(
+                "================================"
             );
 
 
@@ -369,12 +483,11 @@
             );
 
         }
-
     }
 
 
     // ==========================================
-    // START TRACKING
+    // START
     // ==========================================
 
     trackVisit();
