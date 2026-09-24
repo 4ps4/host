@@ -10,18 +10,15 @@
     const VISITOR_KEY = "4ps4_visitor_id";
 
 
-    /* =========================
-       VISITOR ID
-    ========================= */
+    // ==========================================
+    // GET / CREATE VISITOR ID
+    // ==========================================
 
     function getVisitorId() {
-
         try {
-
             let id = localStorage.getItem(VISITOR_KEY);
 
             if (!id) {
-
                 if (
                     typeof crypto !== "undefined" &&
                     typeof crypto.randomUUID === "function"
@@ -30,50 +27,35 @@
                 } else {
                     id =
                         Date.now().toString(36) +
-                        Math.random()
-                            .toString(36)
-                            .substring(2);
+                        Math.random().toString(36).substring(2);
                 }
 
-                localStorage.setItem(
-                    VISITOR_KEY,
-                    id
-                );
+                localStorage.setItem(VISITOR_KEY, id);
             }
 
             return id;
 
         } catch (error) {
-
             return (
                 Date.now().toString(36) +
-                Math.random()
-                    .toString(36)
-                    .substring(2)
+                Math.random().toString(36).substring(2)
             );
-
         }
     }
 
 
-    /* =========================
-       DEVICE
-    ========================= */
+    // ==========================================
+    // DEVICE
+    // ==========================================
 
     function detectDevice() {
+        const ua = navigator.userAgent.toLowerCase();
 
-        const ua =
-            navigator.userAgent.toLowerCase();
-
-        if (
-            /ipad|tablet/.test(ua)
-        ) {
+        if (/ipad|tablet/.test(ua)) {
             return "Tablet";
         }
 
-        if (
-            /mobile|android|iphone|ipod/.test(ua)
-        ) {
+        if (/mobile|android|iphone|ipod/.test(ua)) {
             return "Mobile";
         }
 
@@ -81,130 +63,149 @@
     }
 
 
-    /* =========================
-       BROWSER
-    ========================= */
+    // ==========================================
+    // BROWSER
+    // ==========================================
 
     function detectBrowser() {
+        const ua = navigator.userAgent;
 
-        const ua =
-            navigator.userAgent;
-
-        if (/edg/i.test(ua))
+        if (/edg/i.test(ua)) {
             return "Edge";
+        }
 
-        if (/opr|opera/i.test(ua))
+        if (/opr|opera/i.test(ua)) {
             return "Opera";
+        }
 
-        if (/firefox/i.test(ua))
+        if (/firefox/i.test(ua)) {
             return "Firefox";
+        }
 
-        if (
-            /chrome/i.test(ua) &&
-            !/edg/i.test(ua)
-        )
+        if (/chrome/i.test(ua) && !/edg/i.test(ua)) {
             return "Chrome";
+        }
 
-        if (
-            /safari/i.test(ua) &&
-            !/chrome/i.test(ua)
-        )
+        if (/safari/i.test(ua) && !/chrome/i.test(ua)) {
             return "Safari";
+        }
 
         return "Other";
     }
 
 
-    /* =========================
-       OPERATING SYSTEM
-    ========================= */
+    // ==========================================
+    // OPERATING SYSTEM
+    // ==========================================
 
     function detectOS() {
+        const ua = navigator.userAgent;
 
-        const ua =
-            navigator.userAgent;
-
-        if (/Windows NT/i.test(ua))
+        if (/Windows NT/i.test(ua)) {
             return "Windows";
+        }
 
-        if (/Android/i.test(ua))
+        if (/Android/i.test(ua)) {
             return "Android";
+        }
 
-        if (
-            /iPhone|iPad|iPod/i.test(ua)
-        )
+        if (/iPhone|iPad|iPod/i.test(ua)) {
             return "iOS";
+        }
 
-        if (/Mac OS X/i.test(ua))
+        if (/Mac OS X/i.test(ua)) {
             return "macOS";
+        }
 
-        if (/Linux/i.test(ua))
+        if (/Linux/i.test(ua)) {
             return "Linux";
+        }
 
         return "Other";
     }
 
 
-    /* =========================
-       LOCATION
-    ========================= */
+    // ==========================================
+    // GET COUNTRY / CITY / REGION
+    // ==========================================
 
     async function getLocation() {
 
         try {
 
-            const response =
-                await fetch(
-                    "https://ipapi.co/json/",
-                    {
-                        cache: "no-store"
-                    }
-                );
+            const response = await fetch(
+                "https://ipapi.co/json/",
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
 
             if (!response.ok) {
+
                 throw new Error(
-                    "Location API returned " +
+                    "Location API returned HTTP " +
                     response.status
                 );
+
             }
 
-            const data =
-                await response.json();
+
+            const data = await response.json();
+
+
+            console.log(
+                "🌍 Location data received:",
+                data
+            );
+
 
             return {
 
                 country:
                     data.country_name ||
-                    null,
+                    data.country ||
+                    "Unknown",
 
                 city:
                     data.city ||
-                    null,
+                    "Unknown",
 
                 region:
                     data.region ||
-                    null
+                    data.region_code ||
+                    "Unknown"
+
             };
+
 
         } catch (error) {
 
-            console.warn(
-                "Location unavailable:",
+            console.error(
+                "🌍 Location lookup failed:",
                 error
             );
 
+
             return {
-                country: null,
-                city: null,
-                region: null
+
+                country: "Unknown",
+
+                city: "Unknown",
+
+                region: "Unknown"
+
             };
+
         }
+
     }
 
 
-    /* =========================
-       SEND VISIT
-    ========================= */
+    // ==========================================
+    // TRACK VISIT
+    // ==========================================
 
     async function trackVisit() {
 
@@ -212,11 +213,17 @@
             "4PS4.PRO tracking started..."
         );
 
+
         try {
+
+
+            // Get visitor location
 
             const location =
                 await getLocation();
 
+
+            // Create visit object
 
             const visit = {
 
@@ -255,20 +262,26 @@
 
                 visitor_id:
                     getVisitorId()
+
             };
 
 
             console.log(
-                "Sending visitor data:",
+                "📊 Sending visitor data:",
                 visit
             );
 
 
+            // Send to Supabase
+
             const response =
                 await fetch(
+
                     SUPABASE_URL +
                     "/rest/v1/visits",
+
                     {
+
                         method: "POST",
 
                         headers: {
@@ -285,18 +298,24 @@
 
                             "Prefer":
                                 "return=minimal"
+
                         },
 
                         body:
                             JSON.stringify(visit)
+
                     }
+
                 );
 
+
+            // Check response
 
             if (!response.ok) {
 
                 const errorText =
                     await response.text();
+
 
                 console.error(
                     "================================"
@@ -321,6 +340,7 @@
                 );
 
                 return;
+
             }
 
 
@@ -328,19 +348,34 @@
                 "✅ 4PS4.PRO VISITOR TRACKED"
             );
 
+
+            console.log(
+                "🌍 Country:",
+                visit.country
+            );
+
+
+            console.log(
+                "🏙️ City:",
+                visit.city
+            );
+
+
         } catch (error) {
 
             console.error(
                 "❌ Visitor tracking failed:",
                 error
             );
+
         }
+
     }
 
 
-    /* =========================
-       START
-    ========================= */
+    // ==========================================
+    // START TRACKING
+    // ==========================================
 
     trackVisit();
 
